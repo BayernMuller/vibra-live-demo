@@ -51,10 +51,8 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
     const buffer_byte_length = audioBuffer.length * audioBuffer.BYTES_PER_ELEMENT;
     
     getPcmSignature(audioBuffer, buffer_byte_length, 44100, 32, 1).then(signature => {
-      navigator.clipboard.writeText(signature.uri)
-      console.log(signature.uri);
-      document.getElementById('result').innerText = signature.uri;
-      document.getElementById('samplems').innerText = signature.samplems;
+      const redirectUrl = `/?uri=${encodeURIComponent(signature.uri)}&samplems=${signature.samplems}`;
+      window.location.href = redirectUrl;
     });
 
     startBtn.disabled = false;
