@@ -51,8 +51,12 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
     const buffer_byte_length = audioBuffer.length * audioBuffer.BYTES_PER_ELEMENT;
     
     getPcmSignature(audioBuffer, buffer_byte_length, 44100, 32, 1).then(signature => {
-      const redirectUrl = `/?uri=${encodeURIComponent(signature.uri)}&samplems=${signature.samplems}`;
-      window.top.location.href = redirectUrl;
+      // get https://vercel-proxy-rust-three.vercel.app/api/shazam?uri= and samplems=
+      fetch(`https://vercel-proxy-rust-three.vercel.app/api/shazam?uri=${signature.uri}&samplems=${signature.samplems}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('result').textContent = JSON.stringify(data);
+        });
     });
 
     startBtn.disabled = false;
