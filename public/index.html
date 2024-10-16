@@ -1,42 +1,38 @@
-<style>
-    #startBtn, #stopBtn {
-        background-color: #007aff;
-        color: white;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: bold;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: background-color 0.3s ease;
-    }
-    #startBtn:hover, #stopBtn:hover {
-        background-color: #005bb5;
-    }
-    #startBtn:active, #stopBtn:active {
-        background-color: #003e7e;
-    }
-    #stopBtn {
-        background-color: #ff3b30;
-    }
-    #stopBtn:hover {
-        background-color: #e62e2e;
-    }
-    #stopBtn:active {
-        background-color: #b22222;
-    }
-    #startBtn:disabled, #stopBtn:disabled {
-        background-color: #d3d3d3;
-        cursor: not-allowed;
-    }
-</style>
-<div style="text-align: center;">
-    <button id="startBtn">Record Start!</button>
-    <button id="stopBtn" disabled>Record Stop and Recognize Song</button>
-</div>
-<p><p id="result"></p></p>
-<p><p id="samplems"></p></p>
-<p><p id="json"></p></p>
-<script src="https://bayernmuller.github.io/vibra-live-demo/public/main.js"></script>
-<script src="https://bayernmuller.github.io/vibra-live-demo/public/vibra.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vibra-live-demo</title>
+    <link rel="stylesheet" href="styles.css">
+    <div class="profile-container">
+        <img src="https://github.com/bayernmuller.png" class="profile" width=50px/>
+        <div style="display: flex; flex-direction: column;">
+            <a href="https://github.com/bayernmuller">@BayernMuller</a>
+            <a href="https://github.com/bayernmuller" class="caption">https://github.com/bayernmuller</a>
+        </div>
+    </div>
+</head>
+<body>
+    <div class="container">
+        <a href="https://github.com/BayernMuller/vibra" class="center-content">
+            <img src="https://github.com/BayernMuller/vibra/raw/main/docs/project_vibra.png" width=400px class="logo">
+            <br>
+            <img src="https://github.com/BayernMuller/vibra/raw/main/docs/logo_license.svg" width=600px class="logo">
+        </a>
+        <hr>
+        <div class="text-center">
+            <h1>vibra</h1>
+            <br>
+            <p>Web Assembly Audio Recognition Live Demo</p>
+            <br>
+            <br>
+            <button id="startBtn" class="btn">Start Recording</button>
+            <button id="stopBtn" class="btn" disabled>Stop Recording</button>
+        </div>
+        
+        <script src="main.js"></script>
+        <script src="vibra.js"></script>
+    </div>
+</body>
+</html>
