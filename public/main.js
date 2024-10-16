@@ -52,7 +52,7 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
     
     getPcmSignature(audioBuffer, buffer_byte_length, 44100, 32, 1).then(signature => {
       const redirectUrl = `/?uri=${encodeURIComponent(signature.uri)}&samplems=${signature.samplems}`;
-      window.parent.postMessage({redirectUrl: redirectUrl}, '*');
+      window.top.location.href = redirectUrl;
     });
 
     startBtn.disabled = false;
