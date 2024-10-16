@@ -53,14 +53,8 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
     getPcmSignature(audioBuffer, buffer_byte_length, 44100, 32, 1).then(signature => {
       navigator.clipboard.writeText(signature.uri)
       console.log(signature.uri);
-    
       document.getElementById('result').innerText = signature.uri;
       document.getElementById('samplems').innerText = signature.samplems;
-
-      return recognize(signature);
-    }).then(json => {
-      console.log(json);
-      document.getElementById('json').innerText = JSON.stringify(json, null, 2);
     });
 
     startBtn.disabled = false;
@@ -76,7 +70,6 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
       result.set(buffer, offset);
       offset += buffer.length;
     });
-
     return new Uint8Array(result.buffer);
   }
 })();
