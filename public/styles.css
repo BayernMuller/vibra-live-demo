@@ -69,8 +69,33 @@
     box-sizing: border-box; /* Ensure padding is included in the total width */
 }
 
+.error-message {
+    color: red;
+}
+
 .caption {
     color: gray;
+}
+
+#cover {
+    border-radius: 30px;
+    border: 1px solid #eaeaea;
+    margin-right: 10px;
+}
+
+.track-container {
+    display: none;
+    justify-content: center; /* Center align horizontally */
+    align-items: center; /* Center align vertically */
+    padding: 5px; /* Added padding for mobile */
+    box-sizing: border-box; /* Ensure padding is included in the total width */
+}
+
+.track-info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    width: 400px;
 }
 
 a {

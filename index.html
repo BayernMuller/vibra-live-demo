@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>vibra-live-demo</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="public/styles.css">
     <div class="profile-container">
         <img src="https://github.com/bayernmuller.png" class="profile" width=50px/>
         <div style="display: flex; flex-direction: column;">
@@ -15,23 +15,38 @@
 </head>
 <body>
     <div class="container">
-        <a href="https://github.com/BayernMuller/vibra" class="center-content">
+        <a href="https://github.com/BayernMuller/vibra" class="center-content" id="center-content">
             <img src="https://github.com/BayernMuller/vibra/raw/main/docs/project_vibra.png" width=400px class="logo">
             <br>
             <img src="https://github.com/BayernMuller/vibra/raw/main/docs/logo_license.svg" width=600px class="logo">
         </a>
         <hr>
-        <div class="text-center">
+
+        <div id="track-container" class="track-container">
+            <img id="cover" src="" width="200px">
+            <div class="track-info">
+                <h1 id="title"></h1>
+                <p id="artist"></p>
+                <p id="album" class="caption"></p>
+            </div>
+        </div>
+
+
+        <div class="text-center" id="title-content">
             <h1>vibra</h1>
             <br>
-            <p>Web Assembly Audio Recognition Live Demo</p>
+            <p>Web Assembly Audio Recognition Live Demo (for PC browser)</p>
             <br>
-            <br>
+        </div>
+        
+        <div class="text-center">
+            <br><br><br>
             <button id="startBtn" class="btn">Start Recording</button>
             <button id="stopBtn" class="btn" disabled>Stop Recording</button>
         </div>
         
-        <code id="result"></code>
+        <p id="error-message" class="error-message"></p>
+
 
         <script src="public/main.js"></script>
         <script src="public/vibra.js"></script>
