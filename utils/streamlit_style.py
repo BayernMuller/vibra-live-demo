@@ -43,12 +43,12 @@ def allow_top_navigation():
        
         var updateAndReloadIframes = function () {
             var reloadRequired = false;
-            // Grab all iFrames from agGrid, add the 'allow-top-navigation' property and reload them
-            var iframes = parent.document.querySelectorAll("iframe[title='st_aggrid.agGrid']");
+            // Grab all iFrames, add the 'allow-top-navigation' property and reload them
+            var iframes = parent.document.querySelectorAll("iframe");
             for (var i = 0; i < iframes.length; i++) {
-                if (!iframe.sandbox.contains('allow-top-navigation')) {
+                if (!iframes[i].sandbox.contains('allow-top-navigation-by-user-activation')) {
                     reloadRequired = true;
-                    iframes[i].setAttribute("sandbox", "allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads allow-top-navigation-by-user-activation allow-top-navigation");
+                    iframes[i].setAttribute("sandbox", "allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-downloads allow-top-navigation-by-user-activation");
                 }
             }
             if (reloadRequired) {
@@ -70,8 +70,8 @@ def allow_top_navigation():
         // Some weird bug appear in prod env. Fix: ping the DOM every 1 second to add the property to the iframes if necessary
         var intervalId = window.setInterval(function(){
             var reloadRequired = false;
-            parent.document.querySelectorAll("iframe[title='st_aggrid.agGrid']").forEach((iframe) => {
-                if (!iframe.sandbox.contains('allow-top-navigation')) reloadRequired = true;
+            parent.document.querySelectorAll("iframe").forEach((iframe) => {
+                if (!iframe.sandbox.contains('allow-top-navigation-by-user-activation')) reloadRequired = true;
             })
             if (reloadRequired) updateAndReloadIframes()
         }, 1000);

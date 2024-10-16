@@ -3,8 +3,8 @@ import uuid
 import json
 import random
 from datetime import datetime
-from user_agent import USER_AGENT
-from timezone import TIMZONES
+from .user_agent import USER_AGENTS
+from .timezone import TIMZONES
 
 
 class Shazam:
@@ -35,7 +35,7 @@ class Shazam:
 
         headers = {
             "Content-Type": "application/json",
-            "User-Agent": random.choice(USER_AGENT),
+            "User-Agent": random.choice(USER_AGENTS),
             "Content-Language": "en_US"
         }
 
