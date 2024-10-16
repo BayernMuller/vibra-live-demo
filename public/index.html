@@ -1,7 +1,40 @@
-
-
-<button id="startBtn">녹음 시작</button>
-<button id="stopBtn" disabled>녹음 종료 및 저장</button>
+<style>
+    #startBtn, #stopBtn {
+        background-color: #007aff;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease;
+    }
+    #startBtn:hover, #stopBtn:hover {
+        background-color: #005bb5;
+    }
+    #startBtn:active, #stopBtn:active {
+        background-color: #003e7e;
+    }
+    #stopBtn {
+        background-color: #ff3b30;
+    }
+    #stopBtn:hover {
+        background-color: #e62e2e;
+    }
+    #stopBtn:active {
+        background-color: #b22222;
+    }
+    #startBtn:disabled, #stopBtn:disabled {
+        background-color: #d3d3d3;
+        cursor: not-allowed;
+    }
+</style>
+<div style="text-align: center;">
+    <button id="startBtn">Record Start!</button>
+    <button id="stopBtn" disabled>Record Stop and Recognize Song</button>
+</div>
 <p><p id="result"></p></p>
 <p><p id="samplems"></p></p>
 <p><p id="json"></p></p>
