@@ -24,6 +24,14 @@ body = f"""
     <h1>vibra</h1>
     <p>Web Assembly Music Recognition Service Live Demo!</p>
 </div>
+
+<script>
+    window.addEventListener('message', function(event) {{
+        if (event.data.redirectUrl) {{  
+            window.location.href = event.data.redirectUrl;
+        }}
+    }});
+</script>
 """
 st.markdown(body, unsafe_allow_html=True)
 
