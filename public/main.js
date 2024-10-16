@@ -1,29 +1,3 @@
-// Module.onRuntimeInitialized = () => {
-//   document.getElementById('fileInput').disabled = false;
-// };
-
-// Fingerprint* EMSCRIPTEN_KEEPALIVE GetWavSignature(char* raw_wav, int wav_data_size)
-async function getSignature(rawwav) {
-  const dataPtr = Module._malloc(rawwav.length);
-  Module.HEAPU8.set(rawwav, dataPtr);
-  const signaturePtr = Module.ccall(
-      'GetWavSignature',
-      'number',
-      ['number', 'number'],
-      [dataPtr, rawwav.length]
-  );
-  Module._free(dataPtr);
-
-  const uri = Module.ccall('GetFingerprint', 'string', ['number'], [signaturePtr]);
-  const samplems = Module.ccall('GetSampleMs', 'number', ['number'], [signaturePtr]);
-
-  return {
-      uri: uri,
-      samplems: samplems
-  }
-}
-
-// Fingerprint* EMSCRIPTEN_KEEPALIVE GetPcmSignature(char* raw_pcm, int pcm_data_size, int sample_rate, int sample_width, int channel_count)
 async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channelCount) {
   const dataPtr = Module._malloc(pcm_size);
   Module.HEAPU8.set(rawpcm, dataPtr);
@@ -103,7 +77,6 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
       offset += buffer.length;
     });
 
-    // Uint8Array로 변환
     return new Uint8Array(result.buffer);
   }
 })();

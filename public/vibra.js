@@ -592,7 +592,7 @@ function createExportWrapper(name, nargs) {
 // include: runtime_exceptions.js
 // end include: runtime_exceptions.js
 function findWasmBinary() {
-    var f = 'https://bayernmuller.github.io/vibra-live-demo/public/vibra.wasm';
+    var f = 'vibra.wasm';
     if (!isDataURI(f)) {
       return locateFile(f);
     }
