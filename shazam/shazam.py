@@ -27,9 +27,9 @@ class Shazam:
             "signature": {
                 "uri": signature,
                 "samplems": samplems,
-                "timestamp": now_ms
+                "timestamp": int(datetime.now().timestamp() * 1000)
             },
-            "timestamp": now_ms,
+            "timestamp": int(datetime.now().timestamp() * 1000),
             "timezone": random.choice(TIMZONES)
         }
 
