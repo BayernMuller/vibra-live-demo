@@ -55,7 +55,7 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new AudioContext();
     const sourceNode = audioContext.createMediaStreamSource(stream);
-    await audioContext.audioWorklet.addModule('https://bayernmuller.github.io/vibra/recorderProcessor.js');
+    await audioContext.audioWorklet.addModule('https://bayernmuller.github.io/vibra-live-demo/public/recorderProcessor.js');
     recorderNode = new AudioWorkletNode(audioContext, 'recorder-processor');
     recorderNode.port.onmessage = event => {
       const audioChunk = event.data;
