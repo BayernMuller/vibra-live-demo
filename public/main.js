@@ -39,7 +39,7 @@ function recognizeSuccess(album, title, artist, cover) {
 
 function recognizeFailed(error) {
   const errorMessage = document.getElementById('error-message');
-  errorMessage.textContent = "Error: " + error;
+  errorMessage.textContent = error;
   errorMessage.style.display = 'block';
 }
 
@@ -64,6 +64,9 @@ function recognizeFailed(error) {
     startBtn.disabled = true;
     stopBtn.disabled = false;
     console.log('녹음 시작...');
+
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.style.display = 'none';
   };
 
   stopBtn.onclick = () => {
@@ -75,27 +78,40 @@ function recognizeFailed(error) {
     let audioBuffer = mergeBuffers(recordedChunks);
     const buffer_byte_length = audioBuffer.length * audioBuffer.BYTES_PER_ELEMENT;
     
+    let signature;
+
     getPcmSignature(audioBuffer, buffer_byte_length, 44100, 32, 1)
-      .then(signature => fetch(`https://vercel-proxy-rust-three.vercel.app/api/shazam?uri=${signature.uri}&samplems=${signature.samplems}`))
+      .then(sig => {
+        signature = sig;
+        return fetch(`https://vercel-proxy-rust-three.vercel.app/api/shazam?uri=${signature.uri}&samplems=${signature.samplems}`);
+      })
       .then(response => response.json())
       .then(data => {
-        try {
-          const album = data.track.sections[0].metadata[0].text;
-          const title = data.track.title;
-          const artist = data.track.subtitle;
-          const cover = data.track.images.coverart;
+        if (data.retryms) {
+          if (data.retryms > 8000) {
+            recognizeFailed(`Please record song clearly and try again.`);
+          } else {
+            recognizeFailed(`${signature.samplems / 1000} seconds was too short for recognition. Try to record for ${data.retryms / 1000} seconds.`);
+          }
+          return;
+        }
+
+        const track = data.track || {};
+        const sections = track.sections || [];
+        const metadata = sections[0]?.metadata || [];
+        const album = metadata[0]?.text;
+        const title = track.title;
+        const artist = track.subtitle;
+        const cover = track.images?.coverart;
+
+        if (album && title && artist && cover) {
           recognizeSuccess(album, title, artist, cover);
-        } catch (error) {
-          console.log(data);
-          console.log(error);
-          recognizeFailed(error.message);
+        } else {
+          recognizeFailed("Please reduce the surrounding noise and try again");
         }
       })
       .catch(error => {
         console.log(error);
-        if (errorMessage) {
-          errorMessage.textContent = "Error: " + error.message;
-        }
         recognizeFailed(error.message);
       });
 
