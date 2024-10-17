@@ -49,9 +49,52 @@ function recognizeFailed(error) {
   let audioContext;
   let recorderNode;
   let recordedChunks = [];
+  const durations = [3000, 5000, 7000, 9000, 12000];
+  let currentDurationIndex = 0;
+  let recognitionTimeout;
+  let isRecording = false;
+  let stream;
 
   startBtn.onclick = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Reset variables before starting a new recording session
+    currentDurationIndex = 0;
+    recordedChunks = [];
+    isRecording = false;
+
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    console.log('Recording started...');
+
+    const errorMessage = document.getElementById('error-message');
+    errorMessage.style.display = 'none';
+
+    // Start the first recording with the initial duration
+    await startRecording();
+  };
+
+  stopBtn.onclick = async () => {
+    console.log('Recording stopped by user.');
+    await stopRecording();
+
+    // Reset the current duration index to stop any further recording attempts
+    currentDurationIndex = durations.length;
+
+    // Re-enable the start button and disable the stop button
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+
+    recognizeFailed("Recording stopped by user.");
+
+    // Clean up recorded chunks
+    recordedChunks = [];
+  };
+
+  async function startRecording() {
+    isRecording = true;
+    const duration = durations[currentDurationIndex];
+    console.log(`Recording for ${duration / 1000} seconds...`);
+
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioContext = new AudioContext();
     const sourceNode = audioContext.createMediaStreamSource(stream);
     await audioContext.audioWorklet.addModule('public/recorderProcessor.js');
@@ -60,42 +103,68 @@ function recognizeFailed(error) {
       const audioChunk = event.data;
       recordedChunks.push(audioChunk);
     };
-    sourceNode.connect(recorderNode).connect(audioContext.destination);
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    console.log('녹음 시작...');
+    sourceNode.connect(recorderNode);
 
-    const errorMessage = document.getElementById('error-message');
-    errorMessage.style.display = 'none';
-  };
+    // Stop recording after the specified duration
+    recognitionTimeout = setTimeout(async () => {
+      await stopRecording();
+      const success = await recognizeCurrentRecording();
+      if (success) {
+        // Recognition successful, no need to proceed further
+        console.log('Recognition successful.');
+        // Disable the stop button
+        stopBtn.disabled = true;
+        startBtn.disabled = false;
 
-  stopBtn.onclick = () => {
-    console.log('녹음 종료 및 저장...');
-    
-    recorderNode.disconnect();
-    audioContext.close();
-    
+        // Reset variables after success
+        resetVariables();
+      } else {
+        // Recognition failed, proceed to the next duration
+        currentDurationIndex++;
+        if (currentDurationIndex < durations.length) {
+          // Reset recorded data and start recording for the next duration
+          recordedChunks = [];
+          await startRecording();
+        } else {
+          // All durations attempted, show error message
+          recognizeFailed("Please reduce the surrounding noise and try again");
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+
+          // Reset variables after failure
+          resetVariables();
+        }
+      }
+    }, duration);
+  }
+
+  async function stopRecording() {
+    if (isRecording) {
+      console.log('Stopping recording...');
+      recorderNode.disconnect();
+      audioContext.close();
+      stream.getTracks().forEach(track => track.stop());
+      clearTimeout(recognitionTimeout);
+      isRecording = false;
+    }
+  }
+
+  async function recognizeCurrentRecording() {
+    console.log(`Attempting recognition with ${durations[currentDurationIndex] / 1000} seconds of audio...`);
+
     let audioBuffer = mergeBuffers(recordedChunks);
     const buffer_byte_length = audioBuffer.length * audioBuffer.BYTES_PER_ELEMENT;
-    
-    let signature;
 
-    getPcmSignature(audioBuffer, buffer_byte_length, 44100, 32, 1)
-      .then(sig => {
-        signature = sig;
-        return fetch(`https://vercel-proxy-rust-three.vercel.app/api/shazam?uri=${signature.uri}&samplems=${signature.samplems}`);
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.retryms) {
-          if (data.retryms > 8000) {
-            recognizeFailed(`Please record song clearly and try again.`);
-          } else {
-            recognizeFailed(`${signature.samplems / 1000} seconds was too short for recognition. Try to record for ${data.retryms / 1000} seconds.`);
-          }
-          return;
-        }
+    try {
+      let signature = await getPcmSignature(audioBuffer, buffer_byte_length, 44100, 32, 1);
+      let response = await fetch(`https://vercel-proxy-rust-three.vercel.app/api/shazam?uri=${signature.uri}&samplems=${signature.samplems}`);
+      let data = await response.json();
 
+      if (data.retryms) {
+        // Recognition failed
+        return false;
+      } else {
+        // Recognition successful
         const track = data.track || {};
         const sections = track.sections || [];
         const metadata = sections[0]?.metadata || [];
@@ -106,19 +175,17 @@ function recognizeFailed(error) {
 
         if (album && title && artist && cover) {
           recognizeSuccess(album, title, artist, cover);
+          return true;
         } else {
-          recognizeFailed("Please reduce the surrounding noise and try again");
+          return false;
         }
-      })
-      .catch(error => {
-        console.log(error);
-        recognizeFailed(error.message);
-      });
-
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-    recordedChunks = [];
-  };
+      }
+    } catch (error) {
+      console.log(error);
+      recognizeFailed(error.message);
+      return false;
+    }
+  }
 
   function mergeBuffers(buffers){
     let length = buffers.reduce((total, buffer) => total + buffer.length, 0);
@@ -129,5 +196,16 @@ function recognizeFailed(error) {
       offset += buffer.length;
     });
     return new Uint8Array(result.buffer);
+  }
+
+  function resetVariables() {
+    // Reset all variables to their initial state
+    audioContext = null;
+    recorderNode = null;
+    recordedChunks = [];
+    currentDurationIndex = 0;
+    recognitionTimeout = null;
+    isRecording = false;
+    stream = null;
   }
 })();
