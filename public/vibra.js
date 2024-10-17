@@ -1575,7 +1575,8 @@ var wasmImports = {
 var wasmExports = createWasm();
 var ___wasm_call_ctors = createExportWrapper('__wasm_call_ctors', 0);
 var _GetWavSignature = Module['_GetWavSignature'] = createExportWrapper('GetWavSignature', 2);
-var _GetPcmSignature = Module['_GetPcmSignature'] = createExportWrapper('GetPcmSignature', 5);
+var _GetSignedPcmSignature = Module['_GetSignedPcmSignature'] = createExportWrapper('GetSignedPcmSignature', 5);
+var _GetFloatPcmSignature = Module['_GetFloatPcmSignature'] = createExportWrapper('GetFloatPcmSignature', 5);
 var _GetFingerprint = Module['_GetFingerprint'] = createExportWrapper('GetFingerprint', 1);
 var _GetSampleMs = Module['_GetSampleMs'] = createExportWrapper('GetSampleMs', 1);
 var _malloc = Module['_malloc'] = createExportWrapper('malloc', 1);

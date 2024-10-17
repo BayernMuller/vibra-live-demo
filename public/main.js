@@ -2,7 +2,7 @@ async function getPcmSignature(rawpcm, pcm_size, sampleRate, sampleWidth, channe
   const dataPtr = Module._malloc(pcm_size);
   Module.HEAPU8.set(rawpcm, dataPtr);
   const signaturePtr = Module.ccall(
-      'GetPcmSignature',
+      'GetFloatPcmSignature',
       'number',
       ['number', 'number', 'number', 'number', 'number'],
       [dataPtr, pcm_size, sampleRate, sampleWidth, channelCount]
@@ -49,7 +49,7 @@ function recognizeFailed(error) {
   let audioContext;
   let recorderNode;
   let recordedChunks = [];
-  const durations = [3000, 5000, 7000, 9000, 12000];
+  const durations = [5000, 7000, 9000, 12000];
   let currentDurationIndex = 0;
   let recognitionTimeout;
   let isRecording = false;
